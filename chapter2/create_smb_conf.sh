@@ -27,7 +27,7 @@ do
     then
         echo "退出."
         exit
-        elif [ $doShare -eq 1 ]
+    elif [ $doShare -eq 1 ]
         then 
         # 创建公共路径
         read -p "输入共享目录的绝对路径，例如/data/share： " sharepath

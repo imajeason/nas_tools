@@ -1,8 +1,5 @@
 #!/bin/bash
-
 dirconf="/etc/samba/smb.conf"
-
-
 if ! rpm -q samba >/dev/null
 then
    echo "将要安装samba"
@@ -14,7 +11,6 @@ then
       exit 1
    fi
 fi
-
 echo "安装完成，开始配置.........--"
 # 清空判断的参数值
 unset doShare
@@ -31,8 +27,8 @@ do
     then
         echo "退出."
         exit
-    elif [ $doShare -eq 1 ]
-    then 
+        elif [ $doShare -eq 1 ]
+        then 
         # 创建公共路径
         read -p "输入共享目录的绝对路径，例如/data/share： " sharepath
         echo $sharepath
@@ -43,7 +39,6 @@ do
             unset doShare
             continue
         fi
-
         # grep "\\$sharepath\$" $dirconf
         if [[ -n $(egrep $sharepath $dirconf )  ]]
         then

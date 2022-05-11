@@ -1,8 +1,5 @@
 #!/bin/bash
-
 dirconf="/etc/samba/smb.conf"
-
-
 if ! rpm -q samba >/dev/null
 then
    echo "将要安装samba"
@@ -14,7 +11,6 @@ then
       exit 1
    fi
 fi
-
 echo "安装完成，开始配置.........--"
 # 清空判断的参数值
 unset doShare
@@ -146,8 +142,6 @@ EOF
     echo "=================="
 
 done
-
-
 systemctl restart smb
 if [ $? -ne 0 ]
 then

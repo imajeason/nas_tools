@@ -144,6 +144,7 @@ done
 
 
 systemctl restart smb
+systemctl enable smb
 if [ $? -ne 0 ]
 then
    echo "samba服务启动失败，请检查配置文件是否正常"

@@ -47,6 +47,30 @@ docker info
 
 部署derper
 
+```text-plain
+
+  docker run --restart always \
+  --name derper -p 81:12345 -p 3478:3478/udp \
+  -e DERP_ADDR=:12345 \
+  -e DERP_DOMAIN=域名 \
+  -d ghcr.io/yangchuansheng/derper:latest
+  
+  # nginx会把81反代到443
+  
+  
+  # 如果不是用nginx代理的话就要直接把证书申请好
+  docker run --restart always \
+  --name derper -p 12345:12345 -p 3478:3478/udp \
+  -e DERP_CERT_MODE=manual \
+  -e DERP_ADDR=:12345 \
+  -e DERP_DOMAIN=域名 \
+  -d ghcr.io/yangchuansheng/derper:latest
+  
+  # 查看容器运行情况
+  docker logs -f derper
+  
+```
+
 上面是docker安装的过程，如果你不想用docker，也可以直接编译安装
 
 安装golang环境，版本必须大于1.16
@@ -274,8 +298,6 @@ paths:
     
 ```
 
-
-
 `/etc/headscale/derp.yaml添加内容`
 
 ```text-plain
@@ -315,14 +337,16 @@ tailscale netcheck
 [https://pkgs.tailscale.com/stable/](https://pkgs.tailscale.com/stable/)
 
 ```text-plain
-wget https://pkgs.tailscale.com/stable/tailscale_1.28.0_amd64.tgz
+wget <https://pkgs.tailscale.com/stable/tailscale_1.28.0_amd64.tgz>
 ```
 
 解压：
 
 ```text-plain
-tar zxvf tailscale_1.28.0_amd64.tgz
+tar zxvf tailscale_1.28.0_amd64.tgz x tailscale_1.28.0_amd64/ x
 ```
+
+`tailscale_1.28.0_amd64/tailscale x tailscale_1.28.0_amd64/tailscaled x tailscale_1.28.0_amd64/systemd/ x tailscale_1.28.0_amd64/systemd/tailscaled.defaults x tailscale_1.28.0_amd64/systemd/tailscaled.service`
 
 将二进制文件复制到官方软件包默认的路径下：
 
@@ -347,17 +371,17 @@ cp tailscale_1.28.0_amd64/systemd/tailscaled.defaults /etc/default/tailscaled
 
 启动 tailscaled.service 并设置开机自启：
 
-`systemctl enable --now tailscaled`
+`$ systemctl enable --now tailscaled`
 
 查看服务状态：
 
-`systemctl status tailscaled`
+`$ systemctl status tailscaled`
 
 Tailscale 接入：
 
 ```text-plain
 tailscale up --accept-routes=true --accept-dns=false
-# tailscale up --accept-routes=true --accept-dns=false --login-server=http://域名:8080
+# tailscale up --accept-routes=true --accept-dns=false --login-server=http://yuming.com:8080
 ```
 
 这里推荐将 DNS 功能关闭，因为它会覆盖系统的默认 DNS。如果你对 DNS 有需求，可自己研究官方文档，这里不再赘述。

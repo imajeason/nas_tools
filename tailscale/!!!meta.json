@@ -17,16 +17,9 @@
 				{
 					"type": "relation",
 					"name": "imageLink",
-					"value": "chq23yutIygb",
-					"isInheritable": false,
-					"position": 1
-				},
-				{
-					"type": "relation",
-					"name": "imageLink",
 					"value": "ARraVWHlPfKc",
 					"isInheritable": false,
-					"position": 3
+					"position": 5
 				}
 			],
 			"format": "markdown",

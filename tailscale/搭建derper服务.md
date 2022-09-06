@@ -1,4 +1,7 @@
 # 搭建derper服务让tailscale/headscale百分百穿透成功
+为什么搭建DERP
+---------
+
 tailscale以及headscale是当下最好的组网方案，可以搭建私有的vpn网络实现，
 
 用来内网穿透，用来神奇上网，用来组建异地集群，配图
@@ -29,19 +32,22 @@ derp服务有一个特点
 
 derp服务搭建完毕后，别人只要知道了你的域名和端口就可以白嫖你的服务了，难受
 
-搭建derp服务有两种办法，
+### 搭建derp服务有两种办法
 
 方案一是通过docker安装，但是需要下依赖包，速度会比较慢，甚至安装失败，最好的办法其实就是要么不停的重试，要么用神奇上网
 
 一种是下载安装二进制文件，在服务器或者vps上配置golang环境，编译安装，但是如果你的服务器在中国国内，那安装依赖和编译都是非常痛苦的
 
-先是docker安装，
+docker安装
+--------
 
 确保vps上docker运行正常
 
 ```text-plain
 # 安装docker
 curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+systemctl start docker
+systemctl enable docker
 docker info
 ```
 
@@ -70,6 +76,9 @@ docker info
   docker logs -f derper
   
 ```
+
+编译安装
+----
 
 上面是docker安装的过程，如果你不想用docker，也可以直接编译安装
 
@@ -113,7 +122,8 @@ derper -h
 
 域名可以是二级域名，必须是A记录
 
-使用supervisor守护derper进程
+使用supervisor守护
+--------------
 
 ```text-plain
 sudo yum install supervisor
@@ -140,9 +150,8 @@ sudo systemctl restart supervisord
 sudo systemctl enable supervisord
 ```
 
-nginx反向代理
-
 申请证书
+----
 
 ```text-plain
 sudo yum install epel-release -y
@@ -169,7 +178,8 @@ certbot renew
 systemctl start nginx
 ```
 
-使用nginx反向代理
+nginx反向代理
+---------
 
 ```text-plain
 # centos7 为例
@@ -180,11 +190,6 @@ sudo yum install nginx -y
 添加/etc/nginx/conf.d/derper.conf，内容如下
 
 ```text-plain
-server {
-    listen 80;
-    server_name 域名;
-    rewrite ^(.*) https://$server_name$1 permanent;
-}
 
 server {
     listen 443 ssl;
@@ -214,6 +219,13 @@ server {
     }
 }
 ```
+
+`systemctl start nginx`
+
+`systemctl enable nginx`
+
+tailscale测试derp
+---------------
 
 derper搭建完毕，但是要注意，现在任何人都可以使用我们的derper服务，一会加个认证，在此之前，我们先测试下效果
 
@@ -246,7 +258,7 @@ derper搭建完毕，但是要注意，现在任何人都可以使用我们的de
       "Nodes": [{
           "Name": "1",
           "RegionID": 900,
-          "HostName":"t.dongvps.com",
+          "HostName":"域名",
           "DERPPort": 443
       }]
     }}
@@ -288,7 +300,8 @@ derper搭建完毕，但是要注意，现在任何人都可以使用我们的de
 }
 ```
 
-如果是headscale自建服务
+headscale使用derp
+---------------
 
 修改主配置文件config.yaml
 
@@ -326,7 +339,10 @@ tailscale netcheck
 
 截止到目前，已经能够使用了
 
-![](%E6%90%AD%E5%BB%BAderper%E6%9C%8D%E5%8A%A1%E8%AE%A9tailscaleheadscale%E7%99%BE%E5%88%86%E7%99%BE%E7%A9%BF%E9%80%8F%E6%88%90%E5%8A%9F/2_image.png)
+![](img/2_image.png)
+
+开启https验证
+---------
 
 刚才说了，现在derp是没有加验证的，谁都可以白嫖我们的服务，这是不允许的
 
@@ -376,15 +392,6 @@ cp tailscale_1.28.0_amd64/systemd/tailscaled.defaults /etc/default/tailscaled
 查看服务状态：
 
 `$ systemctl status tailscaled`
-
-Tailscale 接入：
-
-```text-plain
-tailscale up --accept-routes=true --accept-dns=false
-# tailscale up --accept-routes=true --accept-dns=false --login-server=http://yuming.com:8080
-```
-
-这里推荐将 DNS 功能关闭，因为它会覆盖系统的默认 DNS。如果你对 DNS 有需求，可自己研究官方文档，这里不再赘述。
 
 修改derp启动，加上验证
 

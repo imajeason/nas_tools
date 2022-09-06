@@ -1,0 +1,108 @@
+{
+	"formatVersion": 1,
+	"appVersion": "0.54.2",
+	"files": [
+		{
+			"isClone": false,
+			"noteId": "cr5tR7pIbz0B",
+			"notePath": [
+				"cr5tR7pIbz0B"
+			],
+			"title": "搭建derper服务让tailscale/headscale百分百穿透成功",
+			"notePosition": 20,
+			"isExpanded": false,
+			"type": "text",
+			"mime": "text/html",
+			"attributes": [
+				{
+					"type": "relation",
+					"name": "imageLink",
+					"value": "chq23yutIygb",
+					"isInheritable": false,
+					"position": 1
+				},
+				{
+					"type": "relation",
+					"name": "imageLink",
+					"value": "ARraVWHlPfKc",
+					"isInheritable": false,
+					"position": 3
+				}
+			],
+			"format": "markdown",
+			"dataFileName": "搭建derper服务让tailscaleheadscale百.md",
+			"dirFileName": "搭建derper服务让tailscaleheadscale百分百穿透成功",
+			"children": [
+				{
+					"isClone": false,
+					"noteId": "chq23yutIygb",
+					"notePath": [
+						"cr5tR7pIbz0B",
+						"chq23yutIygb"
+					],
+					"title": "image.png",
+					"notePosition": 10,
+					"isExpanded": false,
+					"type": "image",
+					"mime": "image/jpg",
+					"attributes": [
+						{
+							"type": "label",
+							"name": "originalFileName",
+							"value": "image.png",
+							"isInheritable": false,
+							"position": 1000
+						}
+					],
+					"dataFileName": "image.png"
+				},
+				{
+					"isClone": false,
+					"noteId": "9eFxpvL6oaGC",
+					"notePath": [
+						"cr5tR7pIbz0B",
+						"9eFxpvL6oaGC"
+					],
+					"title": "image.png",
+					"notePosition": 20,
+					"isExpanded": false,
+					"type": "image",
+					"mime": "image/jpg",
+					"attributes": [
+						{
+							"type": "label",
+							"name": "originalFileName",
+							"value": "image.png",
+							"isInheritable": false,
+							"position": 1000
+						}
+					],
+					"dataFileName": "1_image.png"
+				},
+				{
+					"isClone": false,
+					"noteId": "ARraVWHlPfKc",
+					"notePath": [
+						"cr5tR7pIbz0B",
+						"ARraVWHlPfKc"
+					],
+					"title": "image.png",
+					"notePosition": 30,
+					"isExpanded": false,
+					"type": "image",
+					"mime": "image/jpg",
+					"attributes": [
+						{
+							"type": "label",
+							"name": "originalFileName",
+							"value": "image.png",
+							"isInheritable": false,
+							"position": 1000
+						}
+					],
+					"dataFileName": "2_image.png"
+				}
+			]
+		}
+	]
+}

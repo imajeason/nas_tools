@@ -182,28 +182,7 @@ naive_config() {
 
 	done
 
-	auto_tls_config
-
-	if [[ $caddy ]]; then
-		path_config_ask
-	fi
 }
-auto_tls_config() {
-	echo -e "
-
-		安装 Caddy 来实现 自动配置 TLS
-		
-		"
-	echo "----------------------------------------------------------------"
-	echo
-    caddy=true
-    install_caddy_info="打开"
-    echo
-    echo
-    echo -e "$yellow 自动配置 TLS = $cyan$install_caddy_info$none"
-    echo "----------------------------------------------------------------"
-}
-
 
 
 install_info() {
@@ -279,11 +258,11 @@ install_caddy() {
 
 install_certbot() {
 	if [[ $cmd == "apt-get" ]]; then
-		$cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin dbus
+		$cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin dbus tar
 		$cmd install -y certbot
 	else
 		# $cmd install -y lrzsz git zip unzip curl wget qrencode libcap iptables-services
-		$cmd install -y lrzsz git zip unzip curl wget qrencode libcap epel-release
+		$cmd install -y lrzsz git zip unzip curl wget qrencode libcap epel-release tar
 		$cmd install -y certbot
 	fi
 
@@ -404,10 +383,7 @@ EOF
 	do_service enable naive
 	do_service status naive
 
-
 }
-
-
 
 config() {
 	mkdir -p /etc/ssl/caddy
@@ -416,10 +392,6 @@ config() {
 	mkdir /var/www -p
 	echo index > /var/www/html 
 	# 生成密码
-
-	
-	# 这里要申请证书
-	install_certbot 
 
 	certbot certonly --standalone -d $domain
 	# 生成json
@@ -601,6 +573,9 @@ show_config_info() {
 	echo -e "端口port     =$naive_port" >> /etc/caddy/.autoconfig
 	echo -e "用户名user   =User" >> /etc/caddy/.autoconfig
 	echo -e "密码password =$password" >> /etc/caddy/.autoconfig
+	echo
+	echo "........... Naiveproxy 配置信息  .........."
+	echo
 	cat /etc/caddy/.autoconfig
 
 }
@@ -623,12 +598,15 @@ install() {
 		esac
 		
 	fi
+	# 这里要申请证书
+	install_certbot 
+	
 	naive_config
 	# blocked_hosts
 	install_info
 	# [[ $caddy ]] && domain_check
 	install_go
-	if [[ $caddy || $naive_port == "443" ]]; then
+	if [[ $caddy || $v2ray_port == "443" ]]; then
 		if [[ $cmd == "yum" ]]; then
 		    [[ $(pgrep "nginx") ]] && systemctl stop nginx
 		    [[ $(command -v nginx) ]] && yum remove nginx -y
@@ -665,6 +643,8 @@ uninstall() {
 }
 
 show_config() {
+	echo
+	echo "........... Naiveproxy 配置信息  .........."
 	cat /etc/caddy/.autoconfig
 }
 

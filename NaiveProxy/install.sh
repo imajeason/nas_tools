@@ -628,7 +628,7 @@ install() {
 	install_info
 	# [[ $caddy ]] && domain_check
 	install_go
-	if [[ $caddy || $v2ray_port == "443" ]]; then
+	if [[ $caddy || $naive_port == "443" ]]; then
 		if [[ $cmd == "yum" ]]; then
 		    [[ $(pgrep "nginx") ]] && systemctl stop nginx
 		    [[ $(command -v nginx) ]] && yum remove nginx -y

@@ -67,6 +67,7 @@ docker info
   # 如果不是用nginx代理的话就要直接把证书申请好
   docker run --restart always \
   --name derper -p 12345:12345 -p 3478:3478/udp \
+  -v /root/.acme.sh/xxxx/:/app/certs \
   -e DERP_CERT_MODE=manual \
   -e DERP_ADDR=:12345 \
   -e DERP_DOMAIN=域名 \

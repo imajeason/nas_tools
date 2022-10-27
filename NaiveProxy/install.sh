@@ -258,11 +258,11 @@ install_caddy() {
 
 install_certbot() {
 	if [[ $cmd == "apt-get" ]]; then
-		$cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin dbus tar
+		$cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin dbus tar 
 		$cmd install -y certbot
 	else
 		# $cmd install -y lrzsz git zip unzip curl wget qrencode libcap iptables-services
-		$cmd install -y lrzsz git zip unzip curl wget qrencode libcap epel-release tar
+		$cmd install -y lrzsz git zip unzip curl wget qrencode libcap epel-release tar openssl-devel
 		$cmd install -y certbot
 	fi
 
@@ -393,7 +393,7 @@ config() {
 	echo index > /var/www/html 
 	# 生成密码
 
-	certbot certonly --standalone -d $domain
+	certbot certonly --standalone -d $domain --agree-to --email $email
 	# 生成json
 
 	ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -413,6 +413,7 @@ edit_port() {
 	user=`egrep 'user' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
 	password=`egrep 'password' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
 	naive_port=`egrep 'port' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
+    email=`egrep 'email' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
 
 	
 	while :; do
@@ -529,6 +530,7 @@ EOF
 	echo -e "端口port     =$naive_port" >> /etc/caddy/.autoconfig
 	echo -e "用户名user   =User" >> /etc/caddy/.autoconfig
 	echo -e "密码password =$password" >> /etc/caddy/.autoconfig
+    echo -e "邮箱email    =$email" >> /etc/caddy/.autoconfig
 	cat /etc/caddy/.autoconfig
 
 }
@@ -573,6 +575,7 @@ show_config_info() {
 	echo -e "端口port     =$naive_port" >> /etc/caddy/.autoconfig
 	echo -e "用户名user   =User" >> /etc/caddy/.autoconfig
 	echo -e "密码password =$password" >> /etc/caddy/.autoconfig
+    echo -e "邮箱email    =$email" >> /etc/caddy/.autoconfig
 	echo
 	echo "........... Naiveproxy 配置信息  .........."
 	echo

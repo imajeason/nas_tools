@@ -656,11 +656,12 @@ install() {
 
 
 	config
-    caddy_config
+	caddy_config
 
 
 	get_ip
-    add_cron
+	add_cron
+	allow_port
 	show_config_info
 	# do_service restart naive
 }
@@ -697,6 +698,26 @@ EOF
     echo 
     echo "........... 证书自动更新设置完成  .........."
     crontab -l
+}
+
+allow_port() {
+
+    if [[ $(command -v yum) ]]; then
+
+		firewall-cmd --zone=public --add-port=$naive_port/tcp --permanent
+        firewall-cmd --zone=public --add-port=$naive_port/udp --permanent
+        firewall-cmd --reload
+
+	fi
+    if [[ $(command -v apt-get) ]]; then
+
+		iptables -I INPUT -p tcp --dport $naive_port -j ACCEPT
+        iptables -I INPUT -p udp --dport $naive_port -j ACCEPT
+        iptables-save
+
+	fi
+    echo 
+    echo "........... 防火墙已开放端口$naive_port  .........."
 }
 
 

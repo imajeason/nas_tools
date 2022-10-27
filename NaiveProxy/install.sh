@@ -57,6 +57,12 @@ if [[ $(command -v apt-get) || $(command -v yum) ]] && [[ $(command -v systemctl
 		cmd="yum"
 
 	fi
+    if [[ $(command -v apt-get) ]]; then
+
+		apt-get update -y
+        apt-get install curl -y
+
+	fi
 
 else
 
@@ -382,6 +388,7 @@ EOF
 	do_service restart naive
 	do_service enable naive
 	do_service status naive
+    q;
 
 }
 

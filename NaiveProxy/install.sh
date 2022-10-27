@@ -386,9 +386,16 @@ WantedBy=multi-user.target
 EOF
 	systemctl daemon-reload
 	do_service restart naive
+    echo 
+    echo "........... NaiveProxy 已启动  .........." 
 	do_service enable naive
-	do_service status naive
-    q;
+    echo 
+    echo "........... NaiveProxy 设置自动启动完成 .........." 
+
+    echo 
+    echo "........... NaiveProxy 服务状态  .........." 
+
+	do_service status naive --no-pager
 
 }
 
@@ -530,7 +537,13 @@ edit_port() {
 }
 EOF
     do_service restart naive
+    echo 
+    echo "........... Naiveproxy 已重启  .........."
+    
 	do_service enable naive
+    echo 
+    echo "........... Naiveproxy 设置自动启动完成  .........."
+    
     echo > /etc/caddy/.autoconfig
 	echo -e "本机ip       =$ip" >> /etc/caddy/.autoconfig
 	echo -e "域名domain   =$domain" >> /etc/caddy/.autoconfig
@@ -538,7 +551,13 @@ EOF
 	echo -e "用户名user   =User" >> /etc/caddy/.autoconfig
 	echo -e "密码password =$password" >> /etc/caddy/.autoconfig
     echo -e "邮箱email    =$email" >> /etc/caddy/.autoconfig
-	cat /etc/caddy/.autoconfig
+
+    echo 
+    echo "........... NaiveProxy 服务状态  .........." 
+    do_service status naive --no-pager
+
+    cat /etc/caddy/.autoconfig
+
 
 }
 
@@ -641,6 +660,7 @@ install() {
 
 
 	get_ip
+    add_cron
 	show_config_info
 	# do_service restart naive
 }
@@ -660,6 +680,23 @@ show_config() {
 	echo
 	echo "........... Naiveproxy 配置信息  .........."
 	cat /etc/caddy/.autoconfig
+}
+
+add_cron() {
+    echo 
+    echo "........... 证书自动更新  .........."
+    cat > /etc/caddy/.renew.sh << EOF
+#!/usr/bin/env bash
+$do_service stop naive
+certbot renew
+$do_service start naive
+EOF
+
+
+    crontab -l > /tmp/conf && echo "0 1 * * * /etc/caddy/.renew.sh" >> /tmp/conf && crontab /tmp/conf && rm -f /tmp/conf
+    echo 
+    echo "........... 证书自动更新设置完成  .........."
+    crontab -l
 }
 
 

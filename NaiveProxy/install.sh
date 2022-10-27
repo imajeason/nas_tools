@@ -262,7 +262,7 @@ install_certbot() {
 		$cmd install -y certbot
 	else
 		# $cmd install -y lrzsz git zip unzip curl wget qrencode libcap iptables-services
-		$cmd install -y lrzsz git zip unzip curl wget qrencode libcap epel-release tar openssl-devel
+		$cmd install -y lrzsz git zip unzip curl wget qrencode libcap epel-release tar openssl-devel ca-certificates
 		$cmd install -y certbot
 	fi
 
@@ -400,7 +400,7 @@ config() {
 	_sys_timezone
 	_sys_time
 
-	caddy_config
+	
 
 	
 }
@@ -601,9 +601,10 @@ install() {
 		esac
 		
 	fi
-	# 这里要申请证书
+	# 安装依赖以及certbot命令
 	install_certbot 
 	
+    # 配置代理信息，比如域名
 	naive_config
 	# blocked_hosts
 	install_info
@@ -620,13 +621,15 @@ install() {
 			[[ $(command -v apache2) ]] && apt-get remove apache2* -y
 		fi
 	fi
-	[[ $caddy ]] && install_caddy
+	install_caddy
 
 	## bbr
 	# _load bbr.sh
 	# _try_enable_bbr
 
+
 	config
+    caddy_config
 
 
 	get_ip

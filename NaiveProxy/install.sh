@@ -602,13 +602,14 @@ install() {
 		
 	fi
 	# 安装依赖以及certbot命令
-	install_certbot 
+	 
 	
     # 配置代理信息，比如域名
 	naive_config
 	# blocked_hosts
 	install_info
 	# [[ $caddy ]] && domain_check
+    install_certbot
 	install_go
 	if [[ $caddy || $v2ray_port == "443" ]]; then
 		if [[ $cmd == "yum" ]]; then
@@ -672,7 +673,7 @@ while :; do
 		echo -e "$yellow 温馨提示.. 本地安装已启用 ..$none"
 		echo
 	fi
-	read -p "$(echo -e "请选择 [${magenta}1-2$none]:")" choose
+	read -p "$(echo -e "请选择 [${magenta}1-4$none]:")" choose
 	case $choose in
 	1)
 		install

@@ -689,9 +689,9 @@ add_cron() {
     cat > /etc/caddy/.renew.sh << EOF
     
 #!/usr/bin/env bash
-do_service stop naive
+systemctl stop naive
 certbot renew
-do_service start naive
+systemctl start naive
 EOF
     chmod +x /etc/caddy/.renew.sh
     if [ `grep -c "caddy" /var/spool/cron/root` -lt '1' ];then

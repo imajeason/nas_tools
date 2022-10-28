@@ -406,8 +406,13 @@ config() {
     mkdir /var/www -p
     echo index > /var/www/html 
     # 生成密码
+    # /etc/letsencrypt/live/x.dongvps.com/
 
-    certbot certonly --standalone -d $domain --agree-to --email $email
+    if [[ $(ls /etc/letsencrypt/live/ | pgrep "$domain") ]] ;then
+        certbot renew
+    else
+        certbot certonly --standalone -d $domain --agree-to --email $email
+    fi
     # 生成json
 
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime

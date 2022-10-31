@@ -577,11 +577,9 @@ edit_user() {
     email=`egrep 'email' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
 
     
-    while :; do
-        echo -e "请输入 "$yellow"NaiveProxy"$none" 用户名，支持A-Za-z_0-9，不能是汉字"
-        read -p "$(echo -e "(用户名: ${cyan}User$none):")" user
-        [ -z "$user" ] && user="User"
-    done
+    echo -e "请输入 "$yellow"NaiveProxy"$none" 用户名，支持A-Za-z_0-9，不能是汉字"
+    read -p "$(echo -e "(用户名: ${cyan}User$none):")" user
+    [ -z "$user" ] && user="User"
     # 输入端口
     cat > /etc/caddy/caddy_config.json << EOF
 {
@@ -604,7 +602,7 @@ edit_user() {
                     {
                       "handle": [
                         {
-                          "auth_user_deprecated": "User",
+                          "auth_user_deprecated": "$user",
                           "auth_pass_deprecated": "$password",
                           "handler": "forward_proxy",
                           "hide_ip": true,

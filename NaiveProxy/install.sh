@@ -204,7 +204,7 @@ install_info() {
     echo
     echo -e "$yellow 域名解析 = ${cyan}我确定已经有解析了$none"
     echo
-    echo -e "$yellow 自动配置 TLS = $cyan$install_caddy_info$none"
+    echo -e "$yellow 解析到$test_domain$none"
 
     echo
     echo "---------- END -------------"
@@ -223,17 +223,18 @@ domain_check() {
     # test_domain=$(ping $domain -c 1 -4 | grep -oE -m1 "([0-9]{1,3}\.){3}[0-9]{1,3}")
     # test_domain=$(wget -qO- --header='accept: application/dns-json' "https://cloudflare-dns.com/dns-query?name=$domain&type=A" | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}" | head -1)
     test_domain=$(curl -sH 'accept: application/dns-json' "https://cloudflare-dns.com/dns-query?name=$domain&type=A" | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}" | head -1)
-    if [[ $test_domain != $ip ]]; then
+    echo $ip_all | grep $test_domain
+    if [[ $? != '0' ]]; then
         echo
         echo -e "$red 检测域名解析错误....$none"
         echo
-        echo -e " 你的域名: $yellow$domain$none 未解析到: $cyan$ip$none"
+        echo -e " 你的域名: $yellow$domain$none 未解析到: \n$cyan$ip_all$none"
         echo
         echo -e " 你的域名当前解析到: $cyan$test_domain$none"
         echo
         echo "备注...如果你的域名是使用 Cloudflare 解析的话..在 Status 那里点一下那图标..让它变灰"
         echo
-        exit 1
+        # exit 1
     fi
 }
 
@@ -690,15 +691,19 @@ EOF
 
 
 get_ip() {
-    ip=$(curl -s https://ipinfo.io/ip)
-    [[ -z $ip ]] && ip=$(curl -s https://api.ip.sb/ip)
-    [[ -z $ip ]] && ip=$(curl -s https://api.ipify.org)
-    [[ -z $ip ]] && ip=$(curl -s https://ip.seeip.org)
-    [[ -z $ip ]] && ip=$(curl -s https://ifconfig.co/ip)
-    [[ -z $ip ]] && ip=$(curl -s https://api.myip.com | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
-    [[ -z $ip ]] && ip=$(curl -s icanhazip.com)
-    [[ -z $ip ]] && ip=$(curl -s myip.ipip.net | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
-    [[ -z $ip ]] && echo -e "\n$red 这垃圾小鸡扔了吧！$none\n" && exit
+    ipv4=$(curl -s https://ipinfo.io/ip)
+    [[ -z $ipv4 ]] && ip=$(curl -s https://api.ip.sb/ip)
+    [[ -z $ipv4 ]] && ip=$(curl -s https://api.ipify.org)
+    [[ -z $ipv4 ]] && ip=$(curl -s https://ip.seeip.org)
+    [[ -z $ipv4 ]] && ip=$(curl -s https://ifconfig.co/ip)
+    [[ -z $ipv4 ]] && ip=$(curl -s https://api.myip.com | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
+    [[ -z $ipv4 ]] && ip=$(curl -s icanhazip.com)
+    [[ -z $ipv4 ]] && ip=$(curl -s myip.ipip.net | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
+
+    [[ -z $ipv4 ]] && echo -e "\n$red 这垃圾小鸡扔了吧！$none\n" && exit
+    ipv6=`ip a | grep inet6 |grep global | awk '{print $2}' | awk -F '/' '{print $1}'`
+
+    ip_all="$ipv4 $ipv6"
 }
 
 error() {

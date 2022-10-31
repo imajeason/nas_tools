@@ -480,7 +480,7 @@ edit_port() {
                     {
                       "handle": [
                         {
-                          "auth_user_deprecated": "User",
+                          "auth_user_deprecated": "$user",
                           "auth_pass_deprecated": "$password",
                           "handler": "forward_proxy",
                           "hide_ip": true,
@@ -553,7 +553,7 @@ EOF
     echo -e "本机ip       =$ip" >> /etc/caddy/.autoconfig
     echo -e "域名domain   =$domain" >> /etc/caddy/.autoconfig
     echo -e "端口port     =$naive_port" >> /etc/caddy/.autoconfig
-    echo -e "用户名user   =User" >> /etc/caddy/.autoconfig
+    echo -e "用户名user   =$user" >> /etc/caddy/.autoconfig
     echo -e "密码password =$password" >> /etc/caddy/.autoconfig
     echo -e "邮箱email    =$email" >> /etc/caddy/.autoconfig
 
@@ -675,7 +675,7 @@ EOF
     echo -e "本机ip       =$ip" >> /etc/caddy/.autoconfig
     echo -e "域名domain   =$domain" >> /etc/caddy/.autoconfig
     echo -e "端口port     =$naive_port" >> /etc/caddy/.autoconfig
-    echo -e "用户名user   =User" >> /etc/caddy/.autoconfig
+    echo -e "用户名user   =$user" >> /etc/caddy/.autoconfig
     echo -e "密码password =$password" >> /etc/caddy/.autoconfig
     echo -e "邮箱email    =$email" >> /etc/caddy/.autoconfig
 

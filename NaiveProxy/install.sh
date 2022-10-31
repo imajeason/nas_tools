@@ -428,7 +428,6 @@ config() {
 
 edit_port() {
     # 修改端口
-    get_ip
     domain=`egrep 'domain' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
     user=`egrep 'user' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
     password=`egrep 'password' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
@@ -551,7 +550,6 @@ EOF
     echo "........... Naiveproxy 设置自动启动完成  .........."
     
     echo > /etc/caddy/.autoconfig
-    echo -e "本机ip       =$ip" >> /etc/caddy/.autoconfig
     echo -e "域名domain   =$domain" >> /etc/caddy/.autoconfig
     echo -e "端口port     =$naive_port" >> /etc/caddy/.autoconfig
     echo -e "用户名user   =$user" >> /etc/caddy/.autoconfig
@@ -570,14 +568,12 @@ EOF
 
 edit_user() {
     # 修改端口
-    get_ip
     domain=`egrep 'domain' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
     user=`egrep 'user' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
     password=`egrep 'password' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
     naive_port=`egrep 'port' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
     email=`egrep 'email' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
 
-    
     echo -e "请输入 "$yellow"NaiveProxy"$none" 用户名，支持A-Za-z_0-9，不能是汉字"
     read -p "$(echo -e "(用户名: ${cyan}User$none):")" user
     [ -z "$user" ] && user="User"
@@ -673,7 +669,6 @@ EOF
     echo "........... Naiveproxy 设置自动启动完成  .........."
     
     echo > /etc/caddy/.autoconfig
-    echo -e "本机ip       =$ip" >> /etc/caddy/.autoconfig
     echo -e "域名domain   =$domain" >> /etc/caddy/.autoconfig
     echo -e "端口port     =$naive_port" >> /etc/caddy/.autoconfig
     echo -e "用户名user   =$user" >> /etc/caddy/.autoconfig
@@ -728,7 +723,6 @@ show_config_info() {
     clear
     # mkdir -p .local/share/caddy/config
     echo > /etc/caddy/.autoconfig
-    echo -e "本机ip       =$ip" >> /etc/caddy/.autoconfig
     echo -e "域名domain   =$domain" >> /etc/caddy/.autoconfig
     echo -e "端口port     =$naive_port" >> /etc/caddy/.autoconfig
     echo -e "用户名user   =User" >> /etc/caddy/.autoconfig

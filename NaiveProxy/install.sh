@@ -272,7 +272,6 @@ install_certbot() {
         $cmd install -y lrzsz git zip unzip curl wget qrencode libcap epel-release tar openssl-devel ca-certificates
         $cmd install -y certbot
     fi
-
 }
 
 
@@ -394,10 +393,9 @@ EOF
     echo "........... NaiveProxy 设置自动启动完成 .........." 
 
     echo 
-    echo "........... NaiveProxy 服务状态  .........." 
-,m                                                                           
+    echo "........... NaiveProxy 服务状态  .........."                         
     do_service --no-pager status naive 
-
+    netstat -nltp |grep caddy
 }
 
 config() {
@@ -559,6 +557,7 @@ EOF
     echo 
     echo "........... NaiveProxy 服务状态  .........." 
     do_service status naive --no-pager
+    netstat -nltp |grep caddy
 
     cat /etc/caddy/.autoconfig
 
@@ -678,6 +677,7 @@ EOF
     echo 
     echo "........... NaiveProxy 服务状态  .........." 
     do_service --no-pager status naive 
+    netstat -nltp |grep caddy
 
     cat /etc/caddy/.autoconfig
 

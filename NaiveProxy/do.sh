@@ -7,3 +7,4 @@ shell_renew(){
 }
 
 shell_renew
+naive

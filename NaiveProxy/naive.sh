@@ -850,6 +850,7 @@ systemctl start naive
 EOF
     chmod +x /etc/caddy/.renew.sh
     if [ `grep -c "caddy" /var/spool/cron/root` -lt '1' ];then
+        touch /var/spool/cron/root
         echo "0 1 * * * /etc/caddy/.renew.sh" >> /var/spool/cron/root
     fi
     crontab -l

@@ -879,7 +879,7 @@ allow_port() {
     echo "........... 防火墙已开放端口$naive_port  .........."
 }
 
-shell_renew
+
 
 while :; do
     echo

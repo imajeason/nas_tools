@@ -422,13 +422,10 @@ config() {
     _sys_timezone
     _sys_time
 
-    
-
-    
 }
 
 
-edit_port() {
+edit_config() {
     # 修改端口
     domain=`egrep 'domain' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
     user=`egrep 'user' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
@@ -436,151 +433,20 @@ edit_port() {
     naive_port=`egrep 'port' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
     email=`egrep 'email' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
 
-    
-    while :; do
-        echo -e "请输入 "$yellow"NaiveProxy"$none" 端口 ["$magenta"1-65535"$none"]，不能选择 "$magenta"80"$none"端口"
-        read -p "$(echo -e "(默认端口: ${cyan}443$none):")" naive_port
-        [ -z "$naive_port" ] && naive_port=443
-        case $naive_port in
-        80)
-            echo
-            echo " ...都说了不能选择 80 端口了咯....."
-            error
-            ;;
-        [1-9] | [1-9][0-9] | [1-9][0-9][0-9] | [1-9][0-9][0-9][0-9] | [1-5][0-9][0-9][0-9][0-9] | 6[0-4][0-9][0-9][0-9] | 65[0-4][0-9][0-9] | 655[0-3][0-5])
-            echo
-            echo
-            echo -e "$yellow naive_port 端口 = $cyan$naive_port$none"
-            echo "----------------------------------------------------------------"
-            echo
-            break
-            ;;
-        *)
-            error
-            ;;
-        esac
-    done
-    # 输入端口
-    cat > /etc/caddy/caddy_config.json << EOF
-{
-  "admin": {
-    "disabled": true
-  },
-  "apps": {
-    "http": {
-      "servers": {
-        "srv0": {
-          "listen": [
-            ":$naive_port"
-          ],
-          "routes": [
-            {
-              "handle": [
-                {
-                  "handler": "subroute",
-                  "routes": [
-                    {
-                      "handle": [
-                        {
-                          "auth_user_deprecated": "$user",
-                          "auth_pass_deprecated": "$password",
-                          "handler": "forward_proxy",
-                          "hide_ip": true,
-                          "hide_via": true,
-                          "probe_resistance": {}
-                        }
-                      ]
-                    },
-                    {
-                      "match": [
-                        {
-                          "host": [
-                            "$domain"
-                          ]
-                        }
-                      ],
-                      "handle": [
-                        {
-                          "handler": "file_server",
-                          "root": "/var/www/html",
-                          "index_names": [
-                            "index.html"
-                          ]
-                        }
-                      ],
-                      "terminal": true
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "tls_connection_policies": [
-            {
-              "match": {
-                "sni": [
-                  "$domain"
-                ]
-              }
-            }
-          ],
-          "automatic_https": {
-            "disable": true
-          }
-        }
-      }
-    },
-    "tls": {
-      "certificates": {
-        "load_files": [
-          {
-            "certificate": "/etc/letsencrypt/live/$domain/fullchain.pem",
-            "key": "/etc/letsencrypt/live/$domain/privkey.pem"
-          }
-        ]
-      }
-    }
-  }
-}
-EOF
-    do_service restart naive
-    echo 
-    echo "........... Naiveproxy 已重启  .........."
-    
-    do_service enable naive
-    echo 
-    echo "........... Naiveproxy 设置自动启动完成  .........."
-    
-    echo > /etc/caddy/.autoconfig
-    echo -e "域名domain   =$domain" >> /etc/caddy/.autoconfig
-    echo -e "端口port     =$naive_port" >> /etc/caddy/.autoconfig
-    echo -e "用户名user   =$user" >> /etc/caddy/.autoconfig
-    echo -e "密码password =$password" >> /etc/caddy/.autoconfig
-    echo -e "邮箱email    =$email" >> /etc/caddy/.autoconfig
+    echo -e "请输入 "$yellow"NaiveProxy"$none" 端口 ["$magenta"1-65535"$none"]，不能选择 "$magenta"80"$none"端口"
+    read -p "$(echo -e "(当前端口: ${cyan}${naive_port}$none):")" naive_port
 
-    echo 
-    echo "........... NaiveProxy 服务状态,按q继续  .........." 
-    do_service status naive --no-pager
-    netstat -nltp |grep caddy
-
-    cat /etc/caddy/.autoconfig
-
-
-}
-
-
-edit_user() {
-    # 修改端口
-    domain=`egrep 'domain' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
-    user=`egrep 'user' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
-    password=`egrep 'password' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
-    naive_port=`egrep 'port' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
-    email=`egrep 'email' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
 
     echo -e "请输入 "$yellow"NaiveProxy"$none" 用户名，支持A-Za-z_0-9，不能是汉字"
-    read -p "$(echo -e "(用户名: ${cyan}User$none):")" user
-    [ -z "$user" ] && user="User"
+    read -p "$(echo -e "(当前用户名: ${cyan}${user}$none):")" user
+
     # 输入端口
+
+    echo -e "请输入 "$yellow"NaiveProxy"$none" 密码，支持A-Za-z_0-9，不能是汉字"
+    read -p "$(echo -e "(当前密码: ${cyan}${password}$none):")" password
+
+    # 输入端口
+    
     cat > /etc/caddy/caddy_config.json << EOF
 {
   "admin": {
@@ -795,13 +661,25 @@ install() {
     show_config_info
     # do_service restart naive
 }
-uninstall() {
+stop_naive() {
 
     if [[ -f /usr/bin/caddy && -f /etc/caddy/caddy_config.json ]]; then
         do_service disable naive
         do_service stop naive
         echo -e "
-        $red 仅仅是停止服务了...$none
+$red 停止服务并禁止自启动...$none
+        " && exit 1
+    fi
+
+}
+
+start_naive() {
+
+    if [[ -f /usr/bin/caddy && -f /etc/caddy/caddy_config.json ]]; then
+        do_service enable naive
+        do_service start naive
+        echo -e "
+$red 启动服务并添加自启动...$none
         " && exit 1
     fi
 
@@ -811,6 +689,9 @@ show_cert(){
     certbot certificates
 }
 
+optimize(){
+    curl https://raw.githubusercontent.com/imajeason/nas_tools/main/NaiveProxy/optimize.sh | bash -
+}
 
 cert_renew(){
     netstat -nltp |grep ":80 "
@@ -886,6 +767,7 @@ allow_port() {
 
 
 
+
 while :; do
     echo
     echo "........... Naiveproxy 一键安装脚本 & 管理脚本 Install shell. .........."
@@ -895,9 +777,9 @@ while :; do
     echo
     echo " 2. 显示信息 Show Info"
     echo
-    echo " 3. 修改用户 Edit User"
+    echo " 3. 修改配置 Edit"
     echo
-    echo " 4. 修改端口 Edit Port"
+    echo " 4. 优化 Optimize"
     echo
     echo " 5. 证书详情 Cert Info"
     echo
@@ -905,8 +787,9 @@ while :; do
     echo
     echo " 7. 更新脚本 Shell Renew"
     echo
-    echo " 8. 停止 Stop Naive"
+    echo " 8. 启动 Start Naive"
     echo
+    echo " 9. 停止 Stop Naive"
     if [[ $local_install ]]; then
         echo -e "$yellow 温馨提示.. 本地安装已启用 ..$none"
         echo
@@ -922,11 +805,11 @@ while :; do
         break
         ;;
     3)
-        edit_user
+        edit_config
         break
         ;;
     4)
-        edit_port
+        optimize
         break
         ;;
     5)
@@ -942,7 +825,11 @@ while :; do
         break
         ;;
     8)
-        uninstall
+        start_naive
+        break
+        ;;
+    9)
+        stop_naive
         break
         ;;
     *)

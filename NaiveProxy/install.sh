@@ -264,7 +264,11 @@ install_caddy() {
 
 
 install_certbot() {
-    if [[ $cmd == "apt-get" ]]; then
+    grep "Emerald Puma" /etc/os-release
+    if [[ $? == '0' ]]; then
+        dnf install python python-pip
+        pip install certbot
+    elif [[ $cmd == "apt-get" ]]; then
         $cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin dbus tar 
         $cmd install -y certbot
     else
@@ -394,7 +398,7 @@ EOF
 
     echo 
     echo "........... NaiveProxy 服务状态,按q继续  .........."                         
-    do_service  status naive 
+    do_service  status naive --no-pager
     netstat -nltp |grep caddy
 }
 
@@ -556,7 +560,7 @@ EOF
 
     echo 
     echo "........... NaiveProxy 服务状态,按q继续  .........." 
-    do_service status naive 
+    do_service status naive --no-pager
     netstat -nltp |grep caddy
 
     cat /etc/caddy/.autoconfig
@@ -676,7 +680,7 @@ EOF
 
     echo 
     echo "........... NaiveProxy 服务状态,按q继续  .........." 
-    do_service  status naive 
+    do_service  status naive --no-pager
     netstat -nltp |grep caddy
 
     cat /etc/caddy/.autoconfig
@@ -820,15 +824,16 @@ cert_renew(){
 }
 
 shell_renew(){
-    curl -o /root/.naive.sh https://raw.githubusercontent.com/imajeason/nas_tools/main/NaiveProxy/install.sh 
+    curl -o /root/.naive.sh https://raw.githubusercontent.com/imajeason/nas_tools/main/NaiveProxy/naive.sh 
     chmod +x /root/.naive.sh
-    ln -s /root/.naive.sh /usr/bin/naive
+    echo
+    echo -e "$red naive更新完成，请重新执行naive $none"
 }
 
 show_config() {
     echo 
     echo "........... NaiveProxy 服务状态,按q继续  .........." 
-    do_service  status naive 
+    do_service  status naive --no-pager
     echo 
     echo "........... NaiveProxy 端口状态  .........." 
     netstat -nltp |grep caddy
@@ -849,6 +854,7 @@ systemctl start naive
 EOF
     chmod +x /etc/caddy/.renew.sh
     if [ `grep -c "caddy" /var/spool/cron/root` -lt '1' ];then
+        touch /var/spool/cron/root
         echo "0 1 * * * /etc/caddy/.renew.sh" >> /var/spool/cron/root
     fi
     crontab -l
@@ -878,7 +884,7 @@ allow_port() {
     echo "........... 防火墙已开放端口$naive_port  .........."
 }
 
-shell_renew
+
 
 while :; do
     echo

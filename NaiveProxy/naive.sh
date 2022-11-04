@@ -433,29 +433,10 @@ edit_config() {
     naive_port=`egrep 'port' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
     email=`egrep 'email' /etc/caddy/.autoconfig | awk -F'=' '{print $2}'`
 
-    while :; do
-        echo -e "请输入 "$yellow"NaiveProxy"$none" 端口 ["$magenta"1-65535"$none"]，不能选择 "$magenta"80"$none"端口"
-        read -p "$(echo -e "(默认端口: ${cyan}${naive_port}$none):")" naive_port
-        [ -z "$naive_port" ] && naive_port=$naive_port
-        case $naive_port in
-        80)
-            echo
-            echo " ...都说了不能选择 80 端口了咯....."
-            error
-            ;;
-        [1-9] | [1-9][0-9] | [1-9][0-9][0-9] | [1-9][0-9][0-9][0-9] | [1-5][0-9][0-9][0-9][0-9] | 6[0-4][0-9][0-9][0-9] | 65[0-4][0-9][0-9] | 655[0-3][0-5])
-            echo
-            echo
-            echo -e "$yellow naive_port 端口 = $cyan$naive_port$none"
-            echo "----------------------------------------------------------------"
-            echo
-            break
-            ;;
-        *)
-            error
-            ;;
-        esac
-    done
+
+    echo -e "请输入 "$yellow"NaiveProxy"$none" 端口 ["$magenta"1-65535"$none"]，不能选择 "$magenta"80"$none"端口"
+    read -p "$(echo -e "(默认端口: ${cyan}${naive_port}$none):")" naive_port
+    [ -z "$naive_port" ] && naive_port=$naive_port
 
 
     echo -e "请输入 "$yellow"NaiveProxy"$none" 用户名，支持A-Za-z_0-9，不能是汉字"

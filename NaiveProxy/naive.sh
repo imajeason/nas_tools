@@ -670,7 +670,7 @@ stop_naive() {
         do_service disable naive
         do_service stop naive
         echo -e "
-        $red 仅仅是停止服务了...$none
+$red 停止服务并禁止自启动...$none
         " && exit 1
     fi
 
@@ -682,7 +682,7 @@ start_naive() {
         do_service enable naive
         do_service start naive
         echo -e "
-        $red 仅仅是停止服务了...$none
+$red 启动服务并添加自启动...$none
         " && exit 1
     fi
 

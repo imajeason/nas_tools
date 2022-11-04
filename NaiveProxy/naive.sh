@@ -809,7 +809,9 @@ while :; do
     echo
     echo " 7. 更新脚本 Shell Renew"
     echo
-    echo " 8. 停止 Stop Naive"
+    echo " 8. 启动 Start Naive"
+    echo
+    echo " 9. 停止 Stop Naive"
     if [[ $local_install ]]; then
         echo -e "$yellow 温馨提示.. 本地安装已启用 ..$none"
         echo
@@ -845,7 +847,11 @@ while :; do
         break
         ;;
     8)
-        uninstall
+        start_naive
+        break
+        ;;
+    9)
+        stop_naive
         break
         ;;
     *)

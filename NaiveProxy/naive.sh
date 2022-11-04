@@ -435,16 +435,16 @@ edit_config() {
 
     echo -e "请输入 "$yellow"NaiveProxy"$none" 端口 ["$magenta"1-65535"$none"]，不能选择 "$magenta"80"$none"端口"
     read -p "$(echo -e "(当前端口: ${cyan}${naive_port}$none):")" naive_port
-    [ -z "$naive_port" ] && naive_port=$naive_port
+
 
     echo -e "请输入 "$yellow"NaiveProxy"$none" 用户名，支持A-Za-z_0-9，不能是汉字"
     read -p "$(echo -e "(当前用户名: ${cyan}${user}$none):")" user
-    [ -z "$user" ] && user=$user
+
     # 输入端口
 
     echo -e "请输入 "$yellow"NaiveProxy"$none" 密码，支持A-Za-z_0-9，不能是汉字"
     read -p "$(echo -e "(当前密码: ${cyan}${password}$none):")" password
-    [ -z "$password" ] && password=$password
+
     # 输入端口
     
     cat > /etc/caddy/caddy_config.json << EOF

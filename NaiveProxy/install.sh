@@ -408,7 +408,7 @@ config() {
     mkdir /etc/caddy/
     mkdir /var/www/html -p
 
-    wget -O /tmp/html.tar.gz https://raw.githubusercontent.com/imajeason/nas_tools/main/NaiveProxy/html.tar.gz
+    wget -o /tmp/html.tar.gz https://raw.githubusercontent.com/imajeason/nas_tools/main/NaiveProxy/html.tar.gz
     tar -zxvf /tmp/html.tar.gz -C /var/www/html
 
 
@@ -803,7 +803,7 @@ while :; do
         echo -e "$yellow 温馨提示.. 本地安装已启用 ..$none"
         echo
     fi
-    read -p "$(echo -e "请选择 [${magenta}1-8$none]:")" choose
+    read -p "$(echo -e "请选择 [${magenta}1-9$none]:")" choose
     case $choose in
     1)
         install

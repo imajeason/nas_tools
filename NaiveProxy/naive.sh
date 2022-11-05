@@ -406,8 +406,9 @@ config() {
     mkdir -p /etc/ssl/caddy
     # 存放Caddyfile的目录
     mkdir /etc/caddy/
-    mkdir /var/www -p
-    echo index > /var/www/html 
+    mkdir /var/www/html -p
+
+    echo index > /var/www/html/index.html
     # 生成密码
     # /etc/letsencrypt/live/x.dongvps.com/
 
@@ -737,6 +738,7 @@ systemctl start naive
 EOF
     chmod +x /etc/caddy/.renew.sh
     if [ `grep -c "caddy" /var/spool/cron/root` -lt '1' ];then
+        mkdir -p /var/spool/cron/
         touch /var/spool/cron/root
         echo "0 1 * * * /etc/caddy/.renew.sh" >> /var/spool/cron/root
     fi
@@ -792,6 +794,7 @@ while :; do
     echo " 8. 启动 Start Naive"
     echo
     echo " 9. 停止 Stop Naive"
+    echo
     if [[ $local_install ]]; then
         echo -e "$yellow 温馨提示.. 本地安装已启用 ..$none"
         echo

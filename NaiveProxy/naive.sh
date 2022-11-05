@@ -240,8 +240,8 @@ domain_check() {
 
 install_go() {
     cd /opt
-    rm /opt/go1.19.linux-amd64.tar.gz -rf
-    wget https://go.dev/dl/go1.19.linux-amd64.tar.gz
+    rm /opt/go1.19.linux-${caddy_arch}.tar.gz -rf
+    wget https://go.dev/dl/go1.19.linux-${caddy_arch}.tar.gz
     tar -zxf go1.19.linux-amd64.tar.gz -C /usr/local/
     echo export GOROOT=/usr/local/go >> /etc/profile
     echo export PATH=$GOROOT/bin:$PATH >> /etc/profile
@@ -269,7 +269,7 @@ install_certbot() {
         dnf install python python-pip
         pip install certbot
     elif [[ $cmd == "apt-get" ]]; then
-        $cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin dbus tar 
+        $cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin tar 
         $cmd install -y certbot
     else
         # $cmd install -y lrzsz git zip unzip curl wget qrencode libcap iptables-services

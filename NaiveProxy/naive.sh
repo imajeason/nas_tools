@@ -587,7 +587,7 @@ pause() {
 }
 do_service() {
     if [[ $systemd ]]; then
-        systemctl $1 $2
+        systemctl $1 $2 $3
     else
         service $2 $1
     fi

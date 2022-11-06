@@ -408,10 +408,7 @@ config() {
     mkdir /etc/caddy/
     mkdir /var/www/html -p
 
-    wget -o /tmp/html.tar.gz https://raw.githubusercontent.com/imajeason/nas_tools/main/NaiveProxy/html.tar.gz
-    tar -zxvf /tmp/html.tar.gz -C /var/www/html
-
-
+    wget -c https://raw.githubusercontent.com/imajeason/nas_tools/main/NaiveProxy/html.tar.gz -O - | tar -xz -C /var/www/
     # echo index > /var/www/html/index.html
     # 生成密码
     # /etc/letsencrypt/live/x.dongvps.com/

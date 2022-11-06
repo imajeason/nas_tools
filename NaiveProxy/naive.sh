@@ -406,9 +406,9 @@ config() {
     mkdir -p /etc/ssl/caddy
     # 存放Caddyfile的目录
     mkdir /etc/caddy/
-    mkdir /var/www/html -p
+    mkdir /var/www/ -p
 
-    echo index > /var/www/html/index.html
+    wget -c https://raw.githubusercontent.com/imajeason/nas_tools/main/NaiveProxy/html.tar.gz -O - | tar -xz -C /var/www/
     # 生成密码
     # /etc/letsencrypt/live/x.dongvps.com/
 

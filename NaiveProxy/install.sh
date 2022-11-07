@@ -635,6 +635,7 @@ install() {
     # blocked_hosts
     install_info
     # [[ $caddy ]] && domain_check
+    allow_port
     install_certbot
     install_go
     if [[ $caddy || $v2ray_port == "443" ]]; then
@@ -661,7 +662,7 @@ install() {
 
     get_ip
     add_cron
-    allow_port
+    
     show_config_info
     # do_service restart naive
 }
@@ -738,12 +739,13 @@ certbot renew
 systemctl start naive
 EOF
     chmod +x /etc/caddy/.renew.sh
+    mkdir -p /var/spool/cron/
+    touch /var/spool/cron/root
     if [ `grep -c "caddy" /var/spool/cron/root` -lt '1' ];then
-        mkdir -p /var/spool/cron/
-        touch /var/spool/cron/root
+        
         echo "0 1 * * * /etc/caddy/.renew.sh" >> /var/spool/cron/root
     fi
-    crontab -l
+
     # crontab -l > /tmp/conf && echo "0 1 * * * /etc/caddy/.renew.sh" >> /tmp/conf && crontab /tmp/conf && rm -f /tmp/conf
     echo 
     echo "........... 证书自动更新设置完成  .........."

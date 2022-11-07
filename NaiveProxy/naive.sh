@@ -634,6 +634,7 @@ install() {
     # blocked_hosts
     install_info
     # [[ $caddy ]] && domain_check
+    allow_port
     install_certbot
     install_go
     if [[ $caddy || $v2ray_port == "443" ]]; then
@@ -660,7 +661,7 @@ install() {
 
     get_ip
     add_cron
-    allow_port
+    
     show_config_info
     # do_service restart naive
 }
@@ -752,6 +753,7 @@ EOF
 allow_port() {
 
     if [[ $(command -v yum) ]]; then
+        firewall-cmd --zone=public --add-port=80/tcp --permanent
 
         firewall-cmd --zone=public --add-port=$naive_port/tcp --permanent
         firewall-cmd --zone=public --add-port=$naive_port/udp --permanent
@@ -759,6 +761,7 @@ allow_port() {
 
     fi
     if [[ $(command -v apt-get) ]]; then
+        iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 
         iptables -I INPUT -p tcp --dport $naive_port -j ACCEPT
         iptables -I INPUT -p udp --dport $naive_port -j ACCEPT

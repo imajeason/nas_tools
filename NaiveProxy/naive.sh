@@ -266,7 +266,7 @@ install_caddy() {
 install_certbot() {
     grep "Emerald Puma" /etc/os-release
     if [[ $? == '0' ]]; then
-        dnf install python python-pip
+        dnf -y install python python-pip
         pip install certbot
     elif [[ $cmd == "apt-get" ]]; then
         $cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin tar 
@@ -681,7 +681,7 @@ start_naive() {
 
     if [[ -f /usr/bin/caddy && -f /etc/caddy/caddy_config.json ]]; then
         do_service enable naive
-        do_service start naive
+        do_service restart naive
         echo -e "
 $red 启动服务并添加自启动...$none
         " && exit 1
@@ -794,7 +794,7 @@ while :; do
     echo
     echo " 7. 更新脚本 Shell Renew"
     echo
-    echo " 8. 启动 Start Naive"
+    echo " 8. 启动/重启 Start Naive"
     echo
     echo " 9. 停止 Stop Naive"
     echo

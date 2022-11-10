@@ -249,6 +249,11 @@ install_go() {
     export GOROOT=/usr/local/go
     export PATH=$GOROOT/bin:$PATH
     go version
+    if [[ $? != '0' ]]; then
+        echo
+        echo "Golang安装失败，请确认机器内存>512M以及空余空间>5G"
+        exit 1
+    fi
 }
 
 install_caddy() {

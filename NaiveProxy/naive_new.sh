@@ -159,11 +159,11 @@ naive_config() {
     get_ip
     echo
     echo
-    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ipv4或者$ipv6$none"
+    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ip$none"
     echo
-    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ipv4或者$ipv6$none"
+    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ip$none"
     echo
-    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ipv4或者$ipv6$none"
+    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ip$none"
     echo "----------------------------------------------------------------"
     echo
 
@@ -240,8 +240,8 @@ domain_check() {
 
 install_go() {
     cd /opt
-    rm /opt/go1.19.linux-amd64.tar.gz -rf
-    wget https://go.dev/dl/go1.19.linux-amd64.tar.gz
+    rm /opt/go1.19.linux-${caddy_arch}.tar.gz -rf
+    wget https://go.dev/dl/go1.19.linux-${caddy_arch}.tar.gz
     tar -zxf go1.19.linux-amd64.tar.gz -C /usr/local/
     echo export GOROOT=/usr/local/go >> /etc/profile
     echo export PATH=$GOROOT/bin:$PATH >> /etc/profile
@@ -249,6 +249,11 @@ install_go() {
     export GOROOT=/usr/local/go
     export PATH=$GOROOT/bin:$PATH
     go version
+    if [[ $? != '0' ]]; then
+        echo
+        echo "Golang安装失败，请确认机器内存>512M以及空余空间>5G"
+        exit 1
+    fi
 }
 
 install_caddy() {
@@ -266,10 +271,10 @@ install_caddy() {
 install_certbot() {
     grep "Emerald Puma" /etc/os-release
     if [[ $? == '0' ]]; then
-        dnf install python python-pip
+        dnf -y install python python-pip
         pip install certbot
     elif [[ $cmd == "apt-get" ]]; then
-        $cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin dbus tar 
+        $cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin tar 
         $cmd install -y certbot
     else
         # $cmd install -y lrzsz git zip unzip curl wget qrencode libcap iptables-services
@@ -406,10 +411,9 @@ config() {
     mkdir -p /etc/ssl/caddy
     # 存放Caddyfile的目录
     mkdir /etc/caddy/
-    mkdir /var/www/html -p
+    mkdir /var/www/ -p
 
     wget -c https://raw.githubusercontent.com/imajeason/nas_tools/main/NaiveProxy/html.tar.gz -O - | tar -xz -C /var/www/
-    # echo index > /var/www/html/index.html
     # 生成密码
     # /etc/letsencrypt/live/x.dongvps.com/
 
@@ -568,10 +572,9 @@ get_ip() {
     [[ -z $ipv4 ]] && ip=$(curl -s https://api.myip.com | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
     [[ -z $ipv4 ]] && ip=$(curl -s icanhazip.com)
     [[ -z $ipv4 ]] && ip=$(curl -s myip.ipip.net | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
-    
-    ipv6=`ip a | grep inet6 |grep global | awk '{print $2}' | awk -F '/' '{print $1}'`
 
-    [[ -z $ipv4 ]] && [[ -z $ipv6 ]] && echo -e "\n$red 没有获取到你这台机器的独立ip4或者ipv6，无法继续！$none\n" && exit
+    [[ -z $ipv4 ]] && echo -e "\n$red 这垃圾小鸡扔了吧！$none\n" && exit
+    ipv6=`ip a | grep inet6 |grep global | awk '{print $2}' | awk -F '/' '{print $1}'`
 
     ip_all="$ipv4 $ipv6"
 }
@@ -610,9 +613,22 @@ show_config_info() {
 
 }
 
+update_caddy() {
+    edit_config
+    install_caddy
 
-update() {
-  install_caddy
+    ## bbr
+    # _load bbr.sh
+    # _try_enable_bbr
+
+    config
+    caddy_config
+
+    get_ip
+    add_cron
+    
+    show_config_info
+
 }
 
 install() {
@@ -620,7 +636,7 @@ install() {
         echo
         echo " 安装 NaiveProxy已存在..."
         echo
-        echo -e "继续安装请输入1,更新请输入2，退出请按任意键"
+        echo -e "继续安装请输入1,退出请输入任意值"
         read -p "$(echo -e "请选择 [${magenta}1-2$none]:")" choose2
         case $choose2 in
         1)
@@ -630,8 +646,10 @@ install() {
         2)
             echo " 更新..."
             do_service stop naive
-            update
-            exit 1
+            #update caddy
+            update_caddy
+            # keep config
+            exit 0
             ;;
         *)
             exit 1
@@ -694,7 +712,7 @@ start_naive() {
 
     if [[ -f /usr/bin/caddy && -f /etc/caddy/caddy_config.json ]]; then
         do_service enable naive
-        do_service start naive
+        do_service restart naive
         echo -e "
 $red 启动服务并添加自启动...$none
         " && exit 1
@@ -751,13 +769,12 @@ certbot renew
 systemctl start naive
 EOF
     chmod +x /etc/caddy/.renew.sh
-    mkdir -p /var/spool/cron/
-    touch /var/spool/cron/root
     if [ `grep -c "caddy" /var/spool/cron/root` -lt '1' ];then
-        
+        mkdir -p /var/spool/cron/
+        touch /var/spool/cron/root
         echo "0 1 * * * /etc/caddy/.renew.sh" >> /var/spool/cron/root
     fi
-
+    crontab -l
     # crontab -l > /tmp/conf && echo "0 1 * * * /etc/caddy/.renew.sh" >> /tmp/conf && crontab /tmp/conf && rm -f /tmp/conf
     echo 
     echo "........... 证书自动更新设置完成  .........."
@@ -767,6 +784,7 @@ EOF
 allow_port() {
 
     if [[ $(command -v yum) ]]; then
+        firewall-cmd --zone=public --add-port=80/tcp --permanent
 
         firewall-cmd --zone=public --add-port=$naive_port/tcp --permanent
         firewall-cmd --zone=public --add-port=$naive_port/udp --permanent
@@ -774,6 +792,7 @@ allow_port() {
 
     fi
     if [[ $(command -v apt-get) ]]; then
+        iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 
         iptables -I INPUT -p tcp --dport $naive_port -j ACCEPT
         iptables -I INPUT -p udp --dport $naive_port -j ACCEPT
@@ -806,7 +825,7 @@ while :; do
     echo
     echo " 7. 更新脚本 Shell Renew"
     echo
-    echo " 8. 启动 Start Naive"
+    echo " 8. 启动/重启 Start Naive"
     echo
     echo " 9. 停止 Stop Naive"
     echo
@@ -814,7 +833,7 @@ while :; do
         echo -e "$yellow 温馨提示.. 本地安装已启用 ..$none"
         echo
     fi
-    read -p "$(echo -e "请选择 [${magenta}1-9$none]:")" choose
+    read -p "$(echo -e "请选择 [${magenta}1-8$none]:")" choose
     case $choose in
     1)
         install

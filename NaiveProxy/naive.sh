@@ -388,7 +388,6 @@ LimitNOFILE=1048576
 LimitNPROC=512
 PrivateTmp=true
 ProtectSystem=full
-AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 [Install]
 WantedBy=multi-user.target
@@ -613,17 +612,52 @@ show_config_info() {
 
 }
 
+update_caddy() {
+    # edit_config
+    export GOROOT=/usr/local/go
+    export PATH=$GOROOT/bin:$PATH
+    install_caddy
+
+    ## bbr
+    # _load bbr.sh
+    # _try_enable_bbr
+
+    #config
+    #caddy_config
+
+    #get_ip
+    #add_cron
+
+}
+
 install() {
     if [[ -f /usr/bin/caddy && -f /etc/caddy/caddy_config.json ]] ; then
         echo
         echo " 安装 NaiveProxy已存在..."
         echo
-        echo -e "继续安装请输入1,退出请输入任意值"
+        echo -e "1：继续安装请输入1,"
+        echo
+        echo -e "2：更新请输入2，"
+        echo
+        echo -e "退出请输入任意值"
+        echo
         read -p "$(echo -e "请选择 [${magenta}1-2$none]:")" choose2
         case $choose2 in
         1)
             echo " 继续安装..."
             do_service stop naive
+            ;;
+        2)
+            echo " 更新Caddy..."
+            do_service stop naive
+
+            #update caddy
+            update_caddy
+
+            do_service start naive
+            cat /etc/caddy/.autoconfig
+            # keep config
+            exit 0
             ;;
         *)
             exit 1
@@ -785,7 +819,7 @@ while :; do
     echo "........... Naiveproxy 一键安装脚本 & 管理脚本 Install shell. .........."
     echo
     echo
-    echo " 1. 安装/重装 Install"
+    echo " 1. 安装/更新 Install/Update"
     echo
     echo " 2. 显示信息 Show Info"
     echo

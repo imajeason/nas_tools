@@ -613,24 +613,6 @@ show_config_info() {
 
 }
 
-update_caddy() {
-    edit_config
-    install_caddy
-
-    ## bbr
-    # _load bbr.sh
-    # _try_enable_bbr
-
-    config
-    caddy_config
-
-    get_ip
-    add_cron
-    
-    show_config_info
-
-}
-
 install() {
     if [[ -f /usr/bin/caddy && -f /etc/caddy/caddy_config.json ]] ; then
         echo
@@ -642,14 +624,6 @@ install() {
         1)
             echo " 继续安装..."
             do_service stop naive
-            ;;
-        2)
-            echo " 更新..."
-            do_service stop naive
-            #update caddy
-            update_caddy
-            # keep config
-            exit 0
             ;;
         *)
             exit 1

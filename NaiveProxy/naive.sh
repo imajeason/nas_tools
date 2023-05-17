@@ -657,6 +657,8 @@ install() {
             do_service start naive
             cat /etc/caddy/.autoconfig
             # keep config
+            
+            break
             exit 0
             ;;
         *)

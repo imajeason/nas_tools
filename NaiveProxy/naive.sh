@@ -708,14 +708,15 @@ install() {
 }
 
 # 卸载
-uninstall_naive(){
+uninstall_naive() {
     do_service disable naive
     do_service stop naive
     rm -f /etc/systemd/system/naive.service
     
     rm -rf /root/.naive.sh /usr/bin/caddy /etc/caddy /root/naive /root/src/caddy
     echo -e "
-$red naiveproxy卸载完成！$none
+$green naiveproxy卸载完成none
+        " && exit 1
 }
 
 
@@ -725,7 +726,7 @@ stop_naive() {
         do_service disable naive
         do_service stop naive
         echo -e "
-$red 停止服务并禁止自启动...$none
+$green 停止服务并禁止自启动...$none
         " && exit 1
     fi
 }
@@ -735,7 +736,7 @@ start_naive() {
         do_service enable naive
         do_service restart naive
         echo -e "
-$red 启动服务并添加自启动...$none
+$green 启动服务并添加自启动...$none
         " && exit 1
     fi
 }

@@ -714,7 +714,8 @@ uninstall_naive(){
     rm -f /etc/systemd/system/naive.service
     
     rm -rf /root/.naive.sh /usr/bin/caddy /etc/caddy /root/naive /root/src/caddy
-    green "naiveproxy卸载完成！"
+    echo -e "
+$red naiveproxy卸载完成！$none
 }
 
 

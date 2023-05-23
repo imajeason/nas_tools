@@ -706,8 +706,20 @@ install() {
     show_config_info
     # do_service restart naive
 }
-stop_naive() {
 
+# 卸载
+uninstall_naive(){
+    do_service disable naive
+    do_service stop naive
+    rm -f /etc/systemd/system/naive.service
+    
+    rm -rf /root/.naive.sh /usr/bin/caddy /etc/caddy /root/naive /root/src/caddy
+    green "naiveproxy卸载完成！"
+}
+
+
+# 停止服务
+stop_naive() {
     if [[ -f /usr/bin/caddy && -f /etc/caddy/caddy_config.json ]]; then
         do_service disable naive
         do_service stop naive
@@ -715,11 +727,9 @@ stop_naive() {
 $red 停止服务并禁止自启动...$none
         " && exit 1
     fi
-
 }
 
 start_naive() {
-
     if [[ -f /usr/bin/caddy && -f /etc/caddy/caddy_config.json ]]; then
         do_service enable naive
         do_service restart naive
@@ -727,7 +737,6 @@ start_naive() {
 $red 启动服务并添加自启动...$none
         " && exit 1
     fi
-
 }
 
 show_cert(){
@@ -835,9 +844,9 @@ while :; do
     echo
     echo " 7. 更新脚本 Shell Renew"
     echo
-    echo " 8. 启动/重启 Start Naive"
+    echo " 8. 重启 Start Naive"
     echo
-    echo " 9. 停止 Stop Naive"
+    echo " 9. 卸载 Stop Naive"
     echo
     if [[ $local_install ]]; then
         echo -e "$yellow 温馨提示.. 本地安装已启用 ..$none"
@@ -878,7 +887,7 @@ while :; do
         break
         ;;
     9)
-        stop_naive
+        uninstall_naive
         break
         ;;
     *)

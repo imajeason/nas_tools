@@ -894,7 +894,6 @@ while :; do
         ;;
     *)
         error
-        ;;
     esac
 done
 # 脚本结束

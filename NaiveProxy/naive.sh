@@ -58,10 +58,7 @@ if [[ $(command -v apt-get) || $(command -v yum) ]] && [[ $(command -v systemctl
 
     fi
     if [[ $(command -v apt-get) ]]; then
-
-        apt-get update -y
-        apt-get install curl -y
-
+        cmd="apt-get"
     fi
 
 else
@@ -242,7 +239,7 @@ install_go() {
     cd /opt
     rm /opt/go1.19.linux-${caddy_arch}.tar.gz -rf
     wget https://go.dev/dl/go1.19.linux-${caddy_arch}.tar.gz
-    tar -zxf go1.19.linux-amd64.tar.gz -C /usr/local/
+    tar -zxf go1.19.linux-${caddy_arch}.tar.gz -C /usr/local/
     echo export GOROOT=/usr/local/go >> /etc/profile
     echo export PATH=$GOROOT/bin:$PATH >> /etc/profile
     source /etc/profile
@@ -274,6 +271,8 @@ install_certbot() {
         dnf -y install python python-pip
         pip install certbot
     elif [[ $cmd == "apt-get" ]]; then
+        $cmd update -y
+        $cmd install curl -y
         $cmd install -y lrzsz git zip unzip curl wget qrencode libcap2-bin tar 
         $cmd install -y certbot
     else
@@ -392,7 +391,7 @@ ProtectSystem=full
 [Install]
 WantedBy=multi-user.target
 EOF
-    systemctl daemon-reload
+    do_service daemon-reload
     do_service restart naive
     echo 
     echo "........... NaiveProxy 已启动  .........." 
@@ -680,9 +679,9 @@ install() {
     install_go
     if [[ $caddy || $v2ray_port == "443" ]]; then
         if [[ $cmd == "yum" ]]; then
-            [[ $(pgrep "nginx") ]] && systemctl stop nginx
+            [[ $(pgrep "nginx") ]] && do_service stop nginx
             [[ $(command -v nginx) ]] && yum remove nginx -y
-            [[ $(pgrep "httpd") ]] && systemctl stop httpd
+            [[ $(pgrep "httpd") ]] && do_service stop httpd
             [[ $(command -v httpd) ]] && yum remove httpd -y
         else
             [[ $(pgrep "apache2") ]] && service apache2 stop

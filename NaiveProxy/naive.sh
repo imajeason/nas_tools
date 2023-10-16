@@ -570,8 +570,9 @@ get_ip() {
     [[ -z $ipv4 ]] && ipv4=$(curl -s https://api.myip.com | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
     [[ -z $ipv4 ]] && ipv4=$(curl -s icanhazip.com)
     [[ -z $ipv4 ]] && ipv4=$(curl -s myip.ipip.net | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
-    [[ -z $ipv4 ]] && echo -e "\n$red 这垃圾小鸡扔了吧！$none\n" && exit
     ipv6=`ip a | grep inet6 |grep global | awk '{print $2}' | awk -F '/' '{print $1}'`
+    [[ -z $ipv4 ]] && [[ -z $ipv6 ]] && echo -e "\n$red 未检测到ipv4地址与ipv6地址！$none\n" && exit
+
 
     ip_all="$ipv4 $ipv6"
 }

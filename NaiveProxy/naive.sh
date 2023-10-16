@@ -238,7 +238,7 @@ domain_check() {
 install_go() {
     cd /opt
     rm /opt/go1.20.7.linux-${caddy_arch}.tar.gz -rf
-    wget https://go.dev/dl/go1.19.linux-${caddy_arch}.tar.gz
+    wget https://go.dev/dl/go1.20.7.linux-${caddy_arch}.tar.gz
     tar -zxf go1.20.7.linux-${caddy_arch}.tar.gz -C /usr/local/
     echo export GOROOT=/usr/local/go >> /etc/profile
     echo export PATH=$GOROOT/bin:$PATH >> /etc/profile
@@ -563,14 +563,13 @@ EOF
 
 get_ip() {
     ipv4=$(curl -s https://ipinfo.io/ip)
-    [[ -z $ipv4 ]] && ip=$(curl -s https://api.ip.sb/ip)
-    [[ -z $ipv4 ]] && ip=$(curl -s https://api.ipify.org)
-    [[ -z $ipv4 ]] && ip=$(curl -s https://ip.seeip.org)
-    [[ -z $ipv4 ]] && ip=$(curl -s https://ifconfig.co/ip)
-    [[ -z $ipv4 ]] && ip=$(curl -s https://api.myip.com | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
-    [[ -z $ipv4 ]] && ip=$(curl -s icanhazip.com)
-    [[ -z $ipv4 ]] && ip=$(curl -s myip.ipip.net | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
-
+    [[ -z $ipv4 ]] && ipv4=$(curl -s https://api.ip.sb/ip)
+    [[ -z $ipv4 ]] && ipv4=$(curl -s https://api.ipify.org)
+    [[ -z $ipv4 ]] && ipv4=$(curl -s https://ip.seeip.org)
+    [[ -z $ipv4 ]] && ipv4=$(curl -s https://ifconfig.co/ip)
+    [[ -z $ipv4 ]] && ipv4=$(curl -s https://api.myip.com | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
+    [[ -z $ipv4 ]] && ipv4=$(curl -s icanhazip.com)
+    [[ -z $ipv4 ]] && ipv4=$(curl -s myip.ipip.net | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
     [[ -z $ipv4 ]] && echo -e "\n$red 这垃圾小鸡扔了吧！$none\n" && exit
     ipv6=`ip a | grep inet6 |grep global | awk '{print $2}' | awk -F '/' '{print $1}'`
 

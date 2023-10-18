@@ -156,11 +156,11 @@ naive_config() {
     get_ip
     echo
     echo
-    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ip$none"
+    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ipv4 或者 $ipv6 $none"
     echo
-    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ip$none"
+    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ipv4 或者 $ipv6 $none"
     echo
-    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ip$none"
+    echo -e "$yellow 请将 $magenta$domain$none $yellow 解析到: $cyan$ipv4 或者 $ipv6 $none"
     echo "----------------------------------------------------------------"
     echo
 
@@ -563,7 +563,6 @@ EOF
 
 get_ip() {
     ipv4=$(curl -s https://ipinfo.io/ip)
-    [[ -z $ipv4 ]] && ipv4=$(curl -s https://api.ip.sb/ip)
     [[ -z $ipv4 ]] && ipv4=$(curl -s https://api.ipify.org)
     [[ -z $ipv4 ]] && ipv4=$(curl -s https://ip.seeip.org)
     [[ -z $ipv4 ]] && ipv4=$(curl -s https://ifconfig.co/ip)

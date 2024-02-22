@@ -237,9 +237,9 @@ domain_check() {
 
 install_go() {
     cd /opt
-    rm /opt/go1.20.7.linux-${caddy_arch}.tar.gz -rf
-    wget https://go.dev/dl/go1.20.7.linux-${caddy_arch}.tar.gz
-    tar -zxf go1.20.7.linux-${caddy_arch}.tar.gz -C /usr/local/
+    rm /opt/go*.tar.gz /usr/local/go/ -rf
+    wget https://go.dev/dl/go1.22.0.linux-${caddy_arch}.tar.gz
+    tar -zxf go1.22.0.linux-${caddy_arch}.tar.gz -C /usr/local/
     echo export GOROOT=/usr/local/go >> /etc/profile
     echo export PATH=$GOROOT/bin:$PATH >> /etc/profile
     source /etc/profile
@@ -256,7 +256,7 @@ install_go() {
 install_caddy() {
     # download caddy file then install
     mkdir /root/src && cd /root/src/
-    go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+    go install github.com/caddyserver/xcaddy/cmd/xcaddy@v0.3.5
     ~/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy@caddy2=github.com/klzgrad/forwardproxy@naive
     cp caddy /usr/bin/
     /usr/bin/caddy version        # 2022-4-8 23:09
@@ -651,6 +651,7 @@ install() {
 
             #update caddy
             update_caddy
+            install_go
 
             do_service start naive
             cat /etc/caddy/.autoconfig

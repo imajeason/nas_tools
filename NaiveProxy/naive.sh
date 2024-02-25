@@ -255,7 +255,9 @@ install_go() {
 
 install_caddy() {
     # download caddy file then install
-    mkdir /root/src && cd /root/src/
+    mkdir /root/src 
+    cd /root/src/
+    rm caddy-forwardproxy-naive.tar.xz
     wget https://github.com/klzgrad/forwardproxy/releases/download/v2.7.5-caddy2-naive2/caddy-forwardproxy-naive.tar.xz
     tar xvf caddy-forwardproxy-naive.tar.xz 
     systemctl stop naive

@@ -256,10 +256,9 @@ install_go() {
 install_caddy() {
     # download caddy file then install
     mkdir /root/src && cd /root/src/
-    wget https://github.com/klzgrad/forwardproxy/releases/download/v2.7.5-caddy2-naive2/caddy-forwardproxy-naive.tar.xz
-    tar xvf caddy-forwardproxy-naive.tar.xz 
-    systemctl stop naive
-    \cp caddy-forwardproxy-naive/caddy /usr/bin/
+    go install github.com/caddyserver/xcaddy/cmd/xcaddy@v0.3.1
+    ~/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy@caddy2=github.com/klzgrad/forwardproxy@naive
+    cp caddy /usr/bin/
     /usr/bin/caddy version        # 2022-4-8 23:09
     #v2.4.6 h1:HGkGICFGvyrodcqOOclHKfvJC0qTU7vny/7FhYp9hNw=  
     setcap cap_net_bind_service=+ep /usr/bin/caddy  # 设置bind权限，可443
@@ -613,8 +612,8 @@ show_config_info() {
 
 update_caddy() {
     # edit_config
-    # export GOROOT=/usr/local/go
-    # export PATH=$GOROOT/bin:$PATH
+    export GOROOT=/usr/local/go
+    export PATH=$GOROOT/bin:$PATH
     install_caddy
 
     ## bbr
@@ -676,7 +675,7 @@ install() {
     # [[ $caddy ]] && domain_check
     allow_port
     install_certbot
-    # install_go
+    install_go
     if [[ $caddy || $v2ray_port == "443" ]]; then
         if [[ $cmd == "yum" ]]; then
             [[ $(pgrep "nginx") ]] && do_service stop nginx
